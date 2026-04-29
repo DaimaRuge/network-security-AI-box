@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网络安全保险市场机会分析看板</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #0a0e1a; color: #e8edf5; min-height: 100vh; }
+  .header { background: linear-gradient(135deg, #0d1117, #161b22); border-bottom: 1px solid #30363d; padding: 24px 40px; }
+  .header h1 { font-size: 22px; font-weight: 700; background: linear-gradient(90deg, #58a6ff, #79c0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .header p { font-size: 13px; color: #8b949e; margin-top: 4px; }
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 24px 40px; }
+  .stat-card { background: linear-gradient(135deg, #161b22, #1c2128); border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center; position: relative; overflow: hidden; }
+  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 12px 12px 0 0; }
+  .stat-card.blue::before { background: linear-gradient(90deg, #1f6feb, #58a6ff); }
+  .stat-card.green::before { background: linear-gradient(90deg, #238636, #3fb950); }
+  .stat-card.orange::before { background: linear-gradient(90deg, #d29922, #f0883e); }
+  .stat-card.purple::before { background: linear-gradient(90deg, #8957e5, #bc8cff); }
+  .stat-num { font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #58a6ff, #79c0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .stat-card.green .stat-num { background: linear-gradient(135deg, #3fb950, #56d364); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .stat-card.orange .stat-num { background: linear-gradient(135deg, #f0883e, #ffa657); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .stat-card.purple .stat-num { background: linear-gradient(135deg, #bc8cff, #d2a8ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .stat-label { font-size: 13px; color: #8b949e; margin-top: 6px; }
+  .main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; padding: 0 40px 24px; }
+  .panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; }
+  .panel-header { padding: 14px 20px; border-bottom: 1px solid #21262d; display: flex; align-items: center; justify-content: space-between; }
+  .panel-title { font-size: 14px; font-weight: 600; color: #e8edf5; }
+  .panel-tag { font-size: 11px; background: #1f6feb22; color: #58a6ff; padding: 2px 8px; border-radius: 20px; }
+  .panel-body { padding: 16px 20px; }
+  .bar-row { display: flex; align-items: center; margin-bottom: 10px; }
+  .bar-label { width: 100px; font-size: 12px; color: #8b949e; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 8px; background: #21262d; border-radius: 4px; overflow: hidden; margin: 0 10px; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+  .bar-fill.blue { background: linear-gradient(90deg, #1f6feb, #58a6ff); }
+  .bar-fill.green { background: linear-gradient(90deg, #238636, #3fb950); }
+  .bar-fill.orange { background: linear-gradient(90deg, #d29922, #f0883e); }
+  .bar-fill.purple { background: linear-gradient(90deg, #8957e5, #bc8cff); }
+  .bar-fill.red { background: linear-gradient(90deg, #da3633, #f85149); }
+  .bar-fill.cyan { background: linear-gradient(90deg, #0891b2, #22d3ee); }
+  .bar-value { font-size: 12px; color: #8b949e; width: 40px; text-align: right; flex-shrink: 0; }
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag { padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: default; transition: transform 0.2s; }
+  .tag:hover { transform: scale(1.05); }
+  .tag.gov { background: #1f6feb22; color: #58a6ff; border: 1px solid #1f6feb44; }
+  .tag.insure { background: #23863622; color: #3fb950; border: 1px solid #23863644; }
+  .tag.telecom { background: #8957e522; color: #bc8cff; border: 1px solid #8957e544; }
+  .tag.sec { background: #d2992222; color: #ffa657; border: 1px solid #d2992244; }
+  .tag.tech { background: #da363322; color: #f85149; border: 1px solid #da363344; }
+  .tag.enterprise { background: #0891b222; color: #22d3ee; border: 1px solid #0891b244; }
+  .tag.area { background: #ec489922; color: #f472b6; border: 1px solid #ec489944; }
+  .tag-count { display: inline-block; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 0 6px; font-size: 10px; margin-left: 4px; }
+  .table-wrap { max-height: 400px; overflow-y: auto; }
+  .table-wrap::-webkit-scrollbar { width: 4px; }
+  .table-wrap::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; padding: 8px 12px; color: #8b949e; font-weight: 500; border-bottom: 1px solid #21262d; position: sticky; top: 0; background: #161b22; }
+  td { padding: 8px 12px; border-bottom: 1px solid #21262d; }
+  tr:hover td { background: #1c2128; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; }
+  .badge-gov { background: #1f6feb22; color: #58a6ff; }
+  .badge-insure { background: #23863622; color: #3fb950; }
+  .badge-telecom { background: #8957e522; color: #bc8cff; }
+  .badge-sec { background: #d2992222; color: #ffa657; }
+  .badge-tech { background: #da363322; color: #f85149; }
+  .badge-enterprise { background: #0891b222; color: #22d3ee; }
+  .full-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; padding: 0 40px 24px; }
+  .opportunity-list { list-style: none; }
+  .opportunity-list li { display: flex; align-items: flex-start; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #21262d; }
+  .opportunity-list li:last-child { border-bottom: none; }
+  .opp-num { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-right: 12px; }
+  .opp-num.n1 { background: linear-gradient(135deg, #1f6feb, #58a6ff); }
+  .opp-num.n2 { background: linear-gradient(135deg, #238636, #3fb950); }
+  .opp-num.n3 { background: linear-gradient(135deg, #d29922, #f0883e); }
+  .opp-num.n4 { background: linear-gradient(135deg, #8957e5, #bc8cff); }
+  .opp-num.n5 { background: linear-gradient(135deg, #da3633, #f85149); }
+  .opp-content strong { font-size: 13px; color: #e8edf5; display: block; margin-bottom: 2px; }
+  .opp-content span { font-size: 11px; color: #8b949e; }
+  .matrix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .matrix-cell { border-radius: 8px; padding: 12px; text-align: center; }
+  .matrix-cell.hot { background: linear-gradient(135deg, #da363322, #f8514922); border: 1px solid #da363344; }
+  .matrix-cell.warm { background: linear-gradient(135deg, #d2992222, #f0883e22); border: 1px solid #d2992244; }
+  .matrix-cell.niche { background: linear-gradient(135deg, #23863622, #3fb95022); border: 1px solid #23863644; }
+  .matrix-cell.emerging { background: linear-gradient(135deg, #1f6feb22, #58a6ff22); border: 1px solid #1f6feb44; }
+  .matrix-cell .cell-name { font-size: 12px; font-weight: 600; color: #e8edf5; margin-bottom: 4px; }
+  .matrix-cell .cell-count { font-size: 20px; font-weight: 800; }
+  .matrix-cell .cell-label { font-size: 10px; color: #8b949e; }
+  .matrix-cell.hot .cell-count { color: #f85149; }
+  .matrix-cell.warm .cell-count { color: #f0883e; }
+  .matrix-cell.niche .cell-count { color: #3fb950; }
+  .matrix-cell.emerging .cell-count { color: #58a6ff; }
+  .footer { text-align: center; padding: 20px; font-size: 11px; color: #484f58; border-top: 1px solid #21262d; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🛡️ 网络安全保险市场机会分析看板</h1>
+  <p>数据来源：第二批次网络安全保险服务试点工作方案公示名单（工业和信息化部 / 国家金融监督管理总局）｜共49个试点方案</p>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card blue">
+    <div class="stat-num">49</div>
+    <div class="stat-label">试点方案总数</div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-num">18</div>
+    <div class="stat-label">省级政府覆盖</div>
+  </div>
+  <div class="stat-card orange">
+    <div class="stat-num">6</div>
+    <div class="stat-label">安全厂商入局</div>
+  </div>
+  <div class="stat-card purple">
+    <div class="stat-num">3</div>
+    <div class="stat-label">运营商体系参与</div>
+  </div>
+</div>
+
+<div class="full-grid">
+  <!-- 市场机会分析 -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">💡 市场机会分析</span>
+      <span class="panel-tag">Market Opportunity</span>
+    </div>
+    <div class="panel-body">
+      <ul class="opportunity-list">
+        <li>
+          <span class="opp-num n1">1</span>
+          <div class="opp-content">
+            <strong>政务 + 医疗行业：红海中的深水区</strong>
+            <span>方案18（政务医疗）直接切入最高价值赛道，公立医院、医保系统、政务云是刚需，政策强制采购背景清晰</span>
+          </div>
+        </li>
+        <li>
+          <span class="opp-num n2">2</span>
+          <div class="opp-content">
+            <strong>中小企业普惠险：蓝海破局点</strong>
+            <span>方案31/34/35合计覆盖中小微多种规模，政府补贴 + 保险机构联动模式最成熟，易规模化</span>
+          </div>
+        </li>
+        <li>
+          <span class="opp-num n3">3</span>
+          <div class="opp-content">
+            <strong>运营商深度绑定：网络服务即是风险</strong>
+            <span>方案22/28/32/44共4个运营商相关试点，5G/云网融合场景天然附带网络安全风险，是保险最优切入场景之一</span>
+          </div>
+        </li>
+        <li>
+          <span class="opp-num n4">4</span>
+          <div class="opp-content">
+            <strong>创新场景溢价高：新能源/智驾/算力</strong>
+            <span>方案33（新能源卡车）、方案30（5G工业安全）、方案37（东数西算）、方案47（智能制造）均为新增量市场，定价空间大、竞争格局未固化</span>
+          </div>
+        </li>
+        <li>
+          <span class="opp-num n5">5</span>
+          <div class="opp-content">
+            <strong>安全厂商转型：从产品到"产品+保险+服务"</strong>
+            <span>启明星辰（方案33-35）、天融信（方案36）已直接担任牵头单位，打破传统保险商边界，重新定义游戏规则</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 行业热度矩阵 -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">🔥 行业热度矩阵</span>
+      <span class="panel-tag">Industry Heat</span>
+    </div>
+    <div class="panel-body">
+      <div class="matrix-grid">
+        <div class="matrix-cell hot">
+          <div class="cell-name">政务</div>
+          <div class="cell-count">2</div>
+          <div class="cell-label">高热·刚需</div>
+        </div>
+        <div class="matrix-cell warm">
+          <div class="cell-name">医疗</div>
+          <div class="cell-count">1</div>
+          <div class="cell-label">中高热</div>
+        </div>
+        <div class="matrix-cell emerging">
+          <div class="cell-name">5G工业</div>
+          <div class="cell-count">1</div>
+          <div class="cell-label">新兴高速</div>
+        </div>
+        <div class="matrix-cell emerging">
+          <div class="cell-name">新能源</div>
+          <div class="cell-count">1</div>
+          <div class="cell-label">新兴高速</div>
+        </div>
+        <div class="matrix-cell warm">
+          <div class="cell-name">金融</div>
+          <div class="cell-count">2</div>
+          <div class="cell-label">中高热</div>
+        </div>
+        <div class="matrix-cell niche">
+          <div class="cell-name">智驾/算力</div>
+          <div class="cell-count">2</div>
+          <div class="cell-label">新兴潜力</div>
+        </div>
+        <div class="matrix-cell warm">
+          <div class="cell-name">教育</div>
+          <div class="cell-count">1</div>
+          <div class="cell-label">稳定</div>
+        </div>
+        <div class="matrix-cell warm">
+          <div class="cell-name">工控</div>
+          <div class="cell-count">1</div>
+          <div class="cell-label">稳定</div>
+        </div>
+        <div class="matrix-cell niche">
+          <div class="cell-name">采矿/烟草</div>
+          <div class="cell-count">2</div>
+          <div class="cell-label">小众精准</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main-grid">
+  <!-- 牵头单位类型分布 -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">🏛️ 牵头单位类型分布</span>
+      <span class="panel-tag">Lead Organization Type</span>
+    </div>
+    <div class="panel-body">
+      <div class="bar-row">
+        <span class="bar-label">省级政府</span>
+        <div class="bar-track"><div class="bar-fill blue" style="width:100%"></div></div>
+        <span class="bar-value">10</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">头部保险</span>
+        <div class="bar-track"><div class="bar-fill green" style="width:72%"></div></div>
+        <span class="bar-value">18</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">运营商体系</span>
+        <div class="bar-track"><div class="bar-fill purple" style="width:33%"></div></div>
+        <span class="bar-value">6</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">安全厂商</span>
+        <div class="bar-track"><div class="bar-fill orange" style="width:33%"></div></div>
+        <span class="bar-value">6</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">科技/企业</span>
+        <div class="bar-track"><div class="bar-fill cyan" style="width:28%"></div></div>
+        <span class="bar-value">5</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">其他机构</span>
+        <div class="bar-track"><div class="bar-fill red" style="width:20%"></div></div>
+        <span class="bar-value">4</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 覆盖行业标签云 -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">🏷️ 覆盖行业标签云</span>
+      <span class="panel-tag">Industry Tags</span>
+    </div>
+    <div class="panel-body">
+      <div class="tag-cloud">
+        <span class="tag gov">省级政府 <span class="tag-count">10</span></span>
+        <span class="tag insure">医疗 <span class="tag-count">1</span></span>
+        <span class="tag insure">政务 <span class="tag-count">1</span></span>
+        <span class="tag insure">教育 <span class="tag-count">1</span></span>
+        <span class="tag insure">金融 <span class="tag-count">2</span></span>
+        <span class="tag insure">工控 <span class="tag-count">1</span></span>
+        <span class="tag insure">交通 <span class="tag-count">1</span></span>
+        <span class="tag insure">发电 <span class="tag-count">1</span></span>
+        <span class="tag insure">互联网 <span class="tag-count">1</span></span>
+        <span class="tag telecom">5G工业安全 <span class="tag-count">1</span></span>
+        <span class="tag telecom">运营商网络 <span class="tag-count">2</span></span>
+        <span class="tag telecom">数据中心 <span class="tag-count">1</span></span>
+        <span class="tag sec">新能源卡车 <span class="tag-count">1</span></span>
+        <span class="tag sec">智能制造 <span class="tag-count">1</span></span>
+        <span class="tag sec">工业互联网 <span class="tag-count">1</span></span>
+        <span class="tag sec">算力园区 <span class="tag-count">1</span></span>
+        <span class="tag sec">反诈 <span class="tag-count">1</span></span>
+        <span class="tag tech">专精特新 <span class="tag-count">1</span></span>
+        <span class="tag tech">中小企业 <span class="tag-count">3</span></span>
+        <span class="tag tech">数字化转型 <span class="tag-count">1</span></span>
+        <span class="tag enterprise">创新型网络安全产品 <span class="tag-count">1</span></span>
+        <span class="tag enterprise">园区 <span class="tag-count">2</span></span>
+        <span class="tag area">东数西算 <span class="tag-count">1</span></span>
+        <span class="tag area">雄安 <span class="tag-count">1</span></span>
+        <span class="tag area">大湾区 <span class="tag-count">1</span></span>
+        <span class="tag area">采矿 <span class="tag-count">1</span></span>
+        <span class="tag area">烟草 <span class="tag-count">1</span></span>
+        <span class="tag area">燃气 <span class="tag-count">1</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 完整名单 -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">📋 完整试点名单（49条）</span>
+      <span class="panel-tag">Full List</span>
+    </div>
+    <div class="panel-body table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>方案名称</th>
+            <th>牵头单位</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>北京市网络安全保险服务工作方案</td><td>北京市经济和信息化局</td><td><span class="badge badge-gov">省级政府</span></td></tr>
+          <tr><td>2</td><td>天津市网络安全保险服务工作方案</td><td>天津市工业和信息化局</td><td><span class="badge badge-gov">省级政府</span></td></tr>
+          <tr><td>3</td><td>河北省网络安全保险服务工作方案</td><td>河北省工业和信息化厅、通信管理局</td><td><span class="badge badge-gov">省级政府</span></td></tr>
+          <tr><td>4</td><td>上海市网络安全保险服务工作方案</td><td>上海市经济和信息化委员会</td><td><span class="badge badge-gov">省级政府</span></td></tr>
+          <tr><td>5</td><td>浙江省网络安全保险服务工作方案</td><td>浙江省经济和信息化厅</td><td><span class="badge badge-gov">省级政府</span></td></tr>
+          <tr><td>6</td><td>江西省网络安全保险服务工作方案</td><td>江西省工业和信息化厅</td><td><span class="badge badge-gov">省级政府</span></td></tr>
+          <tr><td>7</td><td>山东省网络安全保险服务工作方案</td><td>山东省通信管理局</td><td><span class="badge badge-gov">省级政府</span></td></tr>
+          <tr><td>8</td><td>湖北省网络安全保险服务工作方案</td><td>湖北省经济和信息化厅</td><td><span class="badge badge-gov">省级政府</span></td></tr>
+          <tr><td>9</td><td>广东省网络安全保险服务工作方案</td><td>广东省通信管理局</td><td><span class="badge badge-gov">省级政府</span></td></tr>
+          <tr><td>10</td><td>云南省网络安全保险服务工作方案</td><td>云南省工业和信息化厅、云南监管局</td><td><span class="badge badge-gov">省级政府</span></td></tr>
+          <tr><td>11</td><td>大湾区医疗行业网络安全保险</td><td>中国人民财产保险股份有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>12</td><td>面向创新型网络安全产品的保险服务</td><td>中国人民财产保险股份有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>13</td><td>泉城数智园区网络安全保险</td><td>中国人民财产保险股份有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>14</td><td>科创园区普惠型网络安全保险</td><td>中国人民财产保险股份有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>15</td><td>网络安全产品类保险服务</td><td>中国人民财产保险股份有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>16</td><td>东莞市专精特新企业网络安全保险</td><td>中国人民财产保险股份有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>17</td><td>武汉光谷优势产业网络安全保险</td><td>中国人民财产保险股份有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>18</td><td>政务医疗行业网络安全保险</td><td>中国人民财产保险股份有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>19</td><td>教育行业网络安全保险</td><td>中国平安财产保险股份有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>20</td><td>互联网行业网络安全保险</td><td>中国平安财产保险股份有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>21</td><td>工控行业网络安全保险</td><td>中国人寿财产保险股份有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>22</td><td>基于运营商网络服务的网络安全保险</td><td>中国太平洋财产保险青岛分公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>23</td><td>工业互联网网络安全保险</td><td>华泰财产保险青岛分公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>24</td><td>交通行业网络安全保险</td><td>中华联合财产保险股份有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>25</td><td>发电企业网络安全保险</td><td>广东能源财产保险自保有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>26</td><td>网络安全综合类保险服务</td><td>申能财产保险股份有限公司</td><td><span class="badge badge-insure">头部保险</span></td></tr>
+          <tr><td>27</td><td>面向重点行业普惠型网络安全保险</td><td>中国移动通信集团山东有限公司</td><td><span class="badge badge-telecom">运营商</span></td></tr>
+          <tr><td>28</td><td>基于电信运营商特色的网络安全保险</td><td>中国移动通信集团江苏有限公司</td><td><span class="badge badge-telecom">运营商</span></td></tr>
+          <tr><td>29</td><td>网络安全反诈保险服务</td><td>联通（广东）产业互联网有限公司</td><td><span class="badge badge-telecom">运营商</span></td></tr>
+          <tr><td>30</td><td>5G工业安全网络安全保险</td><td>联通（广东）产业互联网有限公司</td><td><span class="badge badge-telecom">运营商</span></td></tr>
+          <tr><td>31</td><td>中小企业网络安全保险</td><td>联通（山西）产业互联网有限公司</td><td><span class="badge badge-telecom">运营商</span></td></tr>
+          <tr><td>32</td><td>运营商特色的网络安全保险</td><td>天翼安全科技有限公司</td><td><span class="badge badge-telecom">运营商</span></td></tr>
+          <tr><td>33</td><td>新能源卡车网络安全保险</td><td>北京启明星辰信息安全技术有限公司</td><td><span class="badge badge-sec">安全厂商</span></td></tr>
+          <tr><td>34</td><td>小微企业网络安全保险</td><td>北京启明星辰信息安全技术有限公司</td><td><span class="badge badge-sec">安全厂商</span></td></tr>
+          <tr><td>35</td><td>面向中小微企业普惠型网络安全保险</td><td>北京启明星辰信息安全技术有限公司</td><td><span class="badge badge-sec">安全厂商</span></td></tr>
+          <tr><td>36</td><td>雄安新兴领域网络安全保险</td><td>天融信雄安网络安全技术有限公司</td><td><span class="badge badge-sec">安全厂商</span></td></tr>
+          <tr><td>37</td><td>东数西算粤港澳大湾区数据中心保险</td><td>广东南粤奇安科技有限公司</td><td><span class="badge badge-sec">安全厂商</span></td></tr>
+          <tr><td>38</td><td>面向大型银行企业的网络安全保险</td><td>北京源堡科技有限公司</td><td><span class="badge badge-tech">科技机构</span></td></tr>
+          <tr><td>39</td><td>金融行业网络安全保险</td><td>安华信达（北京）科技有限公司</td><td><span class="badge badge-tech">科技机构</span></td></tr>
+          <tr><td>40</td><td>工业链式企业网络安全保险</td><td>广东哥能知识科技有限公司</td><td><span class="badge badge-tech">科技机构</span></td></tr>
+          <tr><td>41</td><td>中小企业数字化转型网络安全保险</td><td>济宁鲁南网络空间安全研究院</td><td><span class="badge badge-tech">科技机构</span></td></tr>
+          <tr><td>42</td><td>工业领域网络安全保险</td><td>广州市标准化研究院</td><td><span class="badge badge-tech">科技机构</span></td></tr>
+          <tr><td>43</td><td>烟草企业网络安全保险</td><td>广东烟草肇庆市有限责任公司</td><td><span class="badge badge-enterprise">企业</span></td></tr>
+          <tr><td>44</td><td>广西电信网络安全综合保险</td><td>中国电信广西分公司</td><td><span class="badge badge-telecom">运营商</span></td></tr>
+          <tr><td>45</td><td>京能集团网络安全保险</td><td>北京京能信息技术有限公司</td><td><span class="badge badge-enterprise">企业</span></td></tr>
+          <tr><td>46</td><td>铁矿开采企业网络安全保险</td><td>河北钢铁集团沙河中关铁矿</td><td><span class="badge badge-enterprise">企业</span></td></tr>
+          <tr><td>47</td><td>智能制造网络安全保险</td><td>龙星科技集团股份有限公司</td><td><span class="badge badge-enterprise">企业</span></td></tr>
+          <tr><td>48</td><td>园区算力网络安全保险</td><td>天津武清经开区高村科技园</td><td><span class="badge badge-enterprise">企业</span></td></tr>
+          <tr><td>49</td><td>燃气设备企业网络安全保险</td><td>河北瑞星燃气设备股份有限公司</td><td><span class="badge badge-enterprise">企业</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  数据来源：工业和信息化部 / 国家金融监督管理总局 · 第二批次网络安全保险服务试点工作方案公示名单 · 共49个试点方案<br>
+  ⚠️ 本分析仅供市场研究参考，不构成投资建议
+</div>
+
+</body>
+</html>
